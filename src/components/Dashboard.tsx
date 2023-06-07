@@ -1,25 +1,45 @@
 import React, { useState, useEffect, useContext } from "react";
-import { booksContext } from "../contexts/BooksContext";
 
-function DashBoard() {
-  type Book = {
-    id: string;
-    title: string;
-    author: string;
-    category: string;
-    isbn: number;
-    createdAt: string;
-    editedAt: string;
-    status: string;
-  };
-  const [books, setBooks] = useState<Book[]>([]);
+type Book = {
+  id: string;
+  title: string;
+  author: string;
+  category: string;
+  isbn: number;
+  createdAt: string;
+  editedAt: string;
+  status: string;
+};
+
+type Props = {
+  books: Book[];
+  setBooks: (value: Book[]) => void;
+  setCurrentBook: (value: Book) => void;
+};
+
+const DashBoard: React.FC<Props> = ({ books, setBooks, setCurrentBook }) => {
+  // type Book = {
+  //   id: string;
+  //   title: string;
+  //   author: string;
+  //   category: string;
+  //   isbn: number;
+  //   createdAt: string;
+  //   editedAt: string;
+  //   status: string;
+  // };
+  // const [books, setBooks] = useState<Book[]>([]);
   const [selectedStatus, setSelectedStatus] = useState<string>("0");
   const [filteredCount, setFilteredCount] = useState<number>(0);
   const [booksCount, setBooksCount] = useState<number>(0);
 
-  // const {books, setBooks} = useContext<{books: Book, setBooks: React.Dispatch<React.SetStateAction<Book[]>>}>(booksContext);
-  function fetchBooks() {
-    fetch("http://localhost:3004/books")
+  function fetchBooks(status: string) {
+    let url = "http://localhost:3004/books";
+    if (status !== "2") {
+      url += "?status=" + status;
+    }
+
+    fetch(url)
       .then((response) => {
         if (!response.ok) {
           throw new Error("Wrong response from server");
@@ -33,34 +53,13 @@ function DashBoard() {
       })
       .catch((error) => console.log(error));
   }
-
-  function fetchFilteredBooks(status: string) {
-    fetch("http://localhost:3004/books?status=" + status)
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Wrong response from server");
-        }
-        return response.json();
-      })
-      .then((data) => {
-        setBooks(data);
-        setFilteredCount(data.length);
-      })
-      .catch((error) => console.log(error));
-  }
-
+  
   function filterBooks(event: React.ChangeEvent<HTMLSelectElement>) {
     const selectedValue = event.currentTarget.value;
     setSelectedStatus(selectedValue);
 
-    if (selectedValue === "2") {
-      fetchBooks();
-    } else {
-      fetchFilteredBooks(selectedValue);
-    }
+    fetchBooks(selectedValue);
   }
-
-  useEffect(() => fetchBooks(), []);
 
   function handleActivation(book: Book) {
     const updatedData = {
@@ -85,9 +84,13 @@ function DashBoard() {
             ? "re-activated"
             : "deactivated"
         );
-        fetchBooks();
+        fetchBooks(selectedStatus);
       })
       .catch((error) => console.log(error));
+  }
+
+  function handleEdit(book: Book) {
+    setCurrentBook(book);
   }
 
   function handleDelete(id: string) {
@@ -95,10 +98,12 @@ function DashBoard() {
       method: "DELETE",
     })
       .then((response) => {
-        fetchBooks();
+        fetchBooks(selectedStatus);
       })
       .catch((error) => console.log(error));
   }
+
+  useEffect(() => fetchBooks(selectedStatus), []);
 
   return (
     <>
@@ -142,7 +147,11 @@ function DashBoard() {
               <td>{book.createdAt}</td>
               <td>{book.editedAt == "" ? "-" : book.editedAt}</td>
               <td>
-                <a className="btn btn-primary m-2" href="/modify">
+                <a
+                  className="btn btn-primary m-2"
+                  href="/modify"
+                  onClick={() => handleEdit(book)}
+                >
                   Edit
                 </a>
                 <button
@@ -168,6 +177,6 @@ function DashBoard() {
       </table>
     </>
   );
-}
+};
 
 export default DashBoard;

@@ -2,9 +2,25 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../index.css";
 
-function CreateEditBook() {
-  const navigate = useNavigate();
+type Book = {
+  id: string;
+  title: string;
+  author: string;
+  category: string;
+  isbn: number;
+  createdAt: string;
+  editedAt: string;
+  status: string;
+};
 
+type Props = {
+  currentBook: Book;
+  // isEditing: number;
+};
+
+const CreateEditBook: React.FC<Props> = ({currentBook}) => {
+  const navigate = useNavigate();
+console.log(currentBook);
   const [selectedOption, setSelectedOption] = useState("");
 
   const handleChangeCategory = (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -92,7 +108,7 @@ function CreateEditBook() {
                   required
                   name="title"
                   className="form-control"
-                  defaultValue=""
+                  defaultValue={currentBook.title}
                 />
               </div>
             </div>
@@ -123,12 +139,6 @@ function CreateEditBook() {
                   <option value="Romance">Romance</option>
                   <option value="Biography">Biography</option>
                 </select>
-                {/* <input
-                  required
-                  name="category"
-                  className="form-control"
-                  defaultValue=""
-                /> */}
               </div>
             </div>
 

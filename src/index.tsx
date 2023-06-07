@@ -4,27 +4,40 @@ import DashBoard from "./components/Dashboard";
 import { Header, Footer } from "./components/Layout";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import CreateEditBook from "./components/CreateEditBook";
-import { booksContext } from "./contexts/BooksContext";
 
 function App() {
-  // type Book = {
-  //   title: string;
-  //   author: string;
-  //   category: string;
-  //   isbn: string;
-  // };
-  // const [books, setBooks] = useState<Book[]>([]);
+  type Book = {
+    id: string;
+    title: string;
+    author: string;
+    category: string;
+    isbn: number;
+    createdAt: string;
+    editedAt: string;
+    status: string;
+  };
+
+  const [books, setBooks] = useState<Book[]>([]);
+  const [currentBook, setCurrentBook] = useState<Book>({
+    id: "",
+    title: "",
+    author: "",
+    category: "",
+    isbn: 0,
+    createdAt: "",
+    editedAt: "",
+    status: "",
+  });
+
   return (
     <>
       <BrowserRouter>
-        {/* <booksContext.Provider value={{books, setBooks}}> */}
           <Header />
           <Routes>
-            <Route path="/" element={<DashBoard />} />
-            <Route path="/modify" element={<CreateEditBook />} />
+            <Route path="/" element={<DashBoard books = {books}  setBooks={setBooks} setCurrentBook={setCurrentBook} />} />
+            <Route path="/modify" element={<CreateEditBook  currentBook = {currentBook} />} />
           </Routes>
           <Footer />
-        {/* </booksContext.Provider> */}
       </BrowserRouter>
     </>
   );
