@@ -1,16 +1,6 @@
 {
   "books": [
     {
-      "id": "1",
-      "title": "Book 1",
-      "author": "Author 1",
-      "category": "Category 1",
-      "isbn": "ISBN 1",
-      "createdAt": "",
-      "editedAt": "",
-      "status": "0"
-    },
-    {
       "id": "2",
       "title": "Book 2",
       "author": "Author 2",
@@ -18,7 +8,7 @@
       "isbn": "ISBN 2",
       "createdAt": "",
       "editedAt": "",
-      "status": "1"
+      "status": "0"
     },
     {
       "id": "3",
@@ -28,7 +18,16 @@
       "isbn": "ISBN 3",
       "createdAt": "",
       "editedAt": "",
-      "status": "0"
+      "status": "1"
+    },
+    {
+      "title": "1",
+      "author": "1",
+      "category": "1",
+      "isbn": "1",
+      "createdAt": "June 7, 2023 at 7:10 PM",
+      "status": "1",
+      "id": "rFf5Ejp"
     }
   ]
 }

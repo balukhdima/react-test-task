@@ -95,10 +95,10 @@ function DashBoard() {
     fetch("http://localhost:3004/books/" + id, {
       method: "DELETE",
     })
-    .then((response) => {
-      fetchBooks();
-    })
-    .catch((error) => console.log(error));;
+      .then((response) => {
+        fetchBooks();
+      })
+      .catch((error) => console.log(error));
   }
 
   return (
@@ -140,7 +140,7 @@ function DashBoard() {
               <td>{book.author}</td>
               <td>{book.category}</td>
               <td>{book.isbn}</td>
-              <td>{book.createdAt == "" ? "-" : book.createdAt}</td>
+              <td>{book.createdAt}</td>
               <td>{book.editedAt == "" ? "-" : book.editedAt}</td>
               <td>
                 <a className="btn btn-primary m-2" href="/modify">

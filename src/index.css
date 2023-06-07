@@ -3,3 +3,7 @@
   bottom: 0;
   width: 100%;
 }
+
+.border-red {
+  border: 1px solid red;
+}

@@ -1,34 +1,59 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import "../index.css";
 
 function CreateEditBook() {
   const navigate = useNavigate();
 
+  function checkRequiredInputs(event: React.FormEvent<HTMLFormElement>) {
+    const formElements = Array.from(
+      event.currentTarget.elements
+    ) as HTMLInputElement[];
+
+    const hasEmptyInputs = formElements.some(
+      (element) => element.required && element.value === ""
+    );
+
+    if (hasEmptyInputs) {
+      formElements.forEach((element) => {
+        if (element.required && element.value === "") {
+          element.classList.add("border-red");
+          element.placeholder = "can't be empty";
+        } else {
+          element.classList.remove("border-red");
+        }
+      });
+    }
+
+    return hasEmptyInputs;
+  }
+
+  function getDateTimeNow() {
+    const options: Intl.DateTimeFormatOptions = {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+      hour: "numeric",
+      minute: "numeric",
+      hour12: true,
+    };
+
+    return new Date().toLocaleString("en-US", options);
+  }
+
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    console.log(1);
     event.preventDefault();
     const bookData = new FormData(event.currentTarget);
 
     const book = Object.fromEntries(bookData.entries());
 
-    if (!book.title || !book.author || !book.category || !book.isbn) {
-      console.log("not all fields filled");
+    if (checkRequiredInputs(event)) {
       return;
     }
 
-    // const options = {
-    //   day: 'numeric',
-    //   month: 'long',
-    //   year: 'numeric',
-    //   hour: 'numeric',
-    //   minute: 'numeric',
-    //   hour12: true
-    // };
-
-    // const date = new Date();
-    // book.createdAt = date.toLocaleString('en-US', options);
-    // book.editedAt = "2023-07-07";
-
     book.status = "1";
+    book.createdAt = getDateTimeNow();
 
     fetch("http://localhost:3004/books", {
       method: "POST",
@@ -53,7 +78,7 @@ function CreateEditBook() {
     <>
       <div className="row">
         <div className="col-lg-6 mx-auto">
-          <form onSubmit={(event) => handleSubmit(event)}>
+          <form onSubmit={(event) => handleSubmit(event)} noValidate>
             <div className="row mb-3">
               <label className="col-sm-4 col-form-label">Title</label>
               <div className="col-sm-8">
