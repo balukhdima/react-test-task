@@ -1,0 +1,34 @@
+{
+  "books": [
+    {
+      "id": "1",
+      "title": "Book 1",
+      "author": "Author 1",
+      "category": "Category 1",
+      "isbn": "ISBN 1",
+      "createdAt": "",
+      "editedAt": "",
+      "status": "0"
+    },
+    {
+      "id": "2",
+      "title": "Book 2",
+      "author": "Author 2",
+      "category": "Category 2",
+      "isbn": "ISBN 2",
+      "createdAt": "",
+      "editedAt": "",
+      "status": "1"
+    },
+    {
+      "id": "3",
+      "title": "Book 3",
+      "author": "Author 3",
+      "category": "Category 3",
+      "isbn": "ISBN 3",
+      "createdAt": "",
+      "editedAt": "",
+      "status": "0"
+    }
+  ]
+}
