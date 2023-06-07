@@ -1,9 +1,16 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../index.css";
 
 function CreateEditBook() {
   const navigate = useNavigate();
+
+  const [selectedOption, setSelectedOption] = useState("");
+
+  const handleChangeCategory = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedValue = event.target.value;
+    setSelectedOption(selectedValue);
+  };
 
   function checkRequiredInputs(event: React.FormEvent<HTMLFormElement>) {
     const formElements = Array.from(
@@ -42,7 +49,6 @@ function CreateEditBook() {
   }
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-    console.log(1);
     event.preventDefault();
     const bookData = new FormData(event.currentTarget);
 
@@ -106,12 +112,23 @@ function CreateEditBook() {
             <div className="row mb-3">
               <label className="col-sm-4 col-form-label">Category</label>
               <div className="col-sm-8">
-                <input
+                <select
+                  className="form-control"
+                  name="category"
+                  value= {selectedOption}
+                  onChange={handleChangeCategory}
+                >
+                  <option value="Fiction">Fiction</option>
+                  <option value="Novel">Novel</option>
+                  <option value="Romance">Romance</option>
+                  <option value="Biography">Biography</option>
+                </select>
+                {/* <input
                   required
                   name="category"
                   className="form-control"
                   defaultValue=""
-                />
+                /> */}
               </div>
             </div>
 
@@ -120,6 +137,8 @@ function CreateEditBook() {
               <div className="col-sm-8">
                 <input
                   required
+                  type="number"
+                  min={0}
                   name="isbn"
                   className="form-control"
                   defaultValue=""

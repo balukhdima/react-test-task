@@ -7,7 +7,7 @@ function DashBoard() {
     title: string;
     author: string;
     category: string;
-    isbn: string;
+    isbn: number;
     createdAt: string;
     editedAt: string;
     status: string;
@@ -67,7 +67,6 @@ function DashBoard() {
       ...book,
       status: book.status === "1" ? "0" : "1",
     };
-    console.log(updatedData);
 
     fetch("http://localhost:3004/books/" + book.id, {
       method: "PUT",

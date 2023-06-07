@@ -5,7 +5,7 @@
       "title": "Book 2",
       "author": "Author 2",
       "category": "Category 2",
-      "isbn": "ISBN 2",
+      "isbn": 12345,
       "createdAt": "",
       "editedAt": "",
       "status": "0"
@@ -15,7 +15,7 @@
       "title": "Book 3",
       "author": "Author 3",
       "category": "Category 3",
-      "isbn": "ISBN 3",
+      "isbn": 12345,
       "createdAt": "",
       "editedAt": "",
       "status": "1"
@@ -24,10 +24,28 @@
       "title": "1",
       "author": "1",
       "category": "1",
-      "isbn": "1",
+      "isbn": 12345,
       "createdAt": "June 7, 2023 at 7:10 PM",
-      "status": "1",
+      "status": "0",
       "id": "rFf5Ejp"
+    },
+    {
+      "title": "123",
+      "author": "123",
+      "category": "123",
+      "isbn": "1342",
+      "status": "1",
+      "createdAt": "June 7, 2023 at 8:05 PM",
+      "id": "syeKHYj"
+    },
+    {
+      "title": "dqwd",
+      "author": "qdw",
+      "category": "Biography",
+      "isbn": "1",
+      "status": "0",
+      "createdAt": "June 7, 2023 at 9:34 PM",
+      "id": "As7GsCT"
     }
   ]
 }
