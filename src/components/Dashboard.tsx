@@ -1,61 +1,41 @@
-import React, { useState, useEffect, useContext } from "react";
+import { useState, useEffect, useCallback } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { type Book, BookStatus } from "types";
 
-type Book = {
-  id: string;
-  title: string;
-  author: string;
-  category: string;
-  isbn: number;
-  createdAt: string;
-  editedAt: string;
-  status: string;
-};
+const UndefinedStatus = "Undefined Status";
 
-type Props = {
-  books: Book[];
-  setBooks: (value: Book[]) => void;
-  setCurrentBook: (value: Book) => void;
-};
-
-const DashBoard: React.FC<Props> = ({ books, setBooks, setCurrentBook }) => {
-  // type Book = {
-  //   id: string;
-  //   title: string;
-  //   author: string;
-  //   category: string;
-  //   isbn: number;
-  //   createdAt: string;
-  //   editedAt: string;
-  //   status: string;
-  // };
-  // const [books, setBooks] = useState<Book[]>([]);
-  const [selectedStatus, setSelectedStatus] = useState<string>("0");
+const Dashboard = () => {
+  const [books, setBooks] = useState<Book[]>([]);
+  const [selectedStatus, setSelectedStatus] = useState<
+    BookStatus | typeof UndefinedStatus
+  >(BookStatus.Active);
   const [filteredCount, setFilteredCount] = useState<number>(0);
-  const [booksCount, setBooksCount] = useState<number>(0);
 
-  function fetchBooks(status: string) {
-    let url = "http://localhost:3004/books";
-    if (status !== "2") {
-      url += "?status=" + status;
-    }
+  const fetchBooks = useCallback(
+    (status: BookStatus | typeof UndefinedStatus) => {
+      const url = new URL("/books", process.env.REACT_APP_API_URL);
 
-    fetch(url)
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Wrong response from server");
-        }
-        return response.json();
-      })
-      .then((data) => {
-        setFilteredCount(data.length);
-        setBooksCount(data.length);
-        setBooks(data);
-      })
-      .catch((error) => console.log(error));
-  }
-  
+      status !== UndefinedStatus && url.searchParams.set("status", status);
+
+      fetch(url)
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("Wrong response from server");
+          }
+          return response.json();
+        })
+        .then((data) => {
+          setFilteredCount(data.length);
+
+          setBooks(data);
+        })
+        .catch((error) => console.error(error));
+    },
+    []
+  );
+
   function filterBooks(event: React.ChangeEvent<HTMLSelectElement>) {
-    const selectedValue = event.currentTarget.value;
+    const selectedValue = event.currentTarget.value as BookStatus;
     setSelectedStatus(selectedValue);
 
     fetchBooks(selectedValue);
@@ -64,10 +44,13 @@ const DashBoard: React.FC<Props> = ({ books, setBooks, setCurrentBook }) => {
   function handleActivation(book: Book) {
     const updatedData = {
       ...book,
-      status: book.status === "1" ? "0" : "1",
+      status:
+        book.status === BookStatus.Active
+          ? BookStatus.Deactivated
+          : BookStatus.Active,
     };
 
-    fetch("http://localhost:3004/books/" + book.id, {
+    fetch(`${process.env.REACT_APP_API_URL}/books/` + book.id, {
       method: "PUT",
       headers: {
         Accept: "application/json",
@@ -86,42 +69,40 @@ const DashBoard: React.FC<Props> = ({ books, setBooks, setCurrentBook }) => {
         );
         fetchBooks(selectedStatus);
       })
-      .catch((error) => console.log(error));
-  }
-
-  function handleEdit(book: Book) {
-    setCurrentBook(book);
+      .catch((error) => console.error(error));
   }
 
   function handleDelete(id: string) {
-    fetch("http://localhost:3004/books/" + id, {
+    fetch(`${process.env.REACT_APP_API_URL}/books/` + id, {
       method: "DELETE",
     })
-      .then((response) => {
+      .then(() => {
         fetchBooks(selectedStatus);
       })
-      .catch((error) => console.log(error));
+      .catch((error) => console.error(error));
   }
 
-  useEffect(() => fetchBooks(selectedStatus), []);
+  useEffect(() => fetchBooks(selectedStatus), [fetchBooks, selectedStatus]);
+
+  const navigate = useNavigate();
 
   return (
     <>
       <h2 className="text-center mb-3">List of books</h2>
       <div className="d-flex justify-content-center">
-        <a className="btn btn-primary m-2" href="/modify">
+        <Link className="btn btn-primary m-2" to="/books/create">
           Add Book
-        </a>
+        </Link>
       </div>
 
       <div className="d-flex justify-content-center">
         <select value={selectedStatus} onChange={filterBooks}>
-          <option value="0">Show Active</option>
-          <option value="1">Show Deactivated</option>
-          <option value="2">Show All</option>
+          <option value={BookStatus.Active}>Show Active</option>
+          <option value={BookStatus.Deactivated}>Show Deactivated</option>
+          <option value={UndefinedStatus}>Show All</option>
         </select>
         <span className="px-3">
-          {filteredCount} / {booksCount}
+        {filteredCount} rows
         </span>
       </div>
 
@@ -138,45 +119,52 @@ const DashBoard: React.FC<Props> = ({ books, setBooks, setCurrentBook }) => {
           </tr>
         </thead>
         <tbody>
-          {books.map((book, index) => (
-            <tr key={index}>
-              <td>{book.title}</td>
-              <td>{book.author}</td>
-              <td>{book.category}</td>
-              <td>{book.isbn}</td>
-              <td>{book.createdAt}</td>
-              <td>{book.editedAt == "" ? "-" : book.editedAt}</td>
-              <td>
-                <a
-                  className="btn btn-primary m-2"
-                  href="/modify"
-                  onClick={() => handleEdit(book)}
-                >
-                  Edit
-                </a>
-                <button
-                  className="btn btn-secondary m-2"
-                  onClick={() => handleActivation(book)}
-                >
-                  {book.status === "0" ? "Re-activate" : "Deactivate"}
-                </button>
-                {book.status === "0" ? (
+          {books.map((book, index) => {
+            function navigateToEditPage() {
+              navigate("/books/edit", { state: book });
+            }
+
+            return (
+              <tr key={index}>
+                <td>{book.title}</td>
+                <td>{book.author}</td>
+                <td>{book.category}</td>
+                <td>{book.isbn}</td>
+                <td>{book.createdAt}</td>
+                <td>{book.editedAt === "" ? "-" : book.editedAt}</td>
+                <td>
                   <button
-                    onClick={() => handleDelete(book.id)}
-                    className="btn btn-danger m-2"
+                    className="btn btn-primary m-2"
+                    onClick={navigateToEditPage}
                   >
-                    Delete
+                    Edit
                   </button>
-                ) : (
-                  ""
-                )}
-              </td>
-            </tr>
-          ))}
+                  <button
+                    className="btn btn-secondary m-2"
+                    onClick={() => handleActivation(book)}
+                  >
+                    {book.status === BookStatus.Deactivated
+                      ? "Re-activate"
+                      : "Deactivate"}
+                  </button>
+                  {book.status === BookStatus.Deactivated ? (
+                    <button
+                      onClick={() => handleDelete(book.id)}
+                      className="btn btn-danger m-2"
+                    >
+                      Delete
+                    </button>
+                  ) : (
+                    ""
+                  )}
+                </td>
+              </tr>
+            );
+          })}
         </tbody>
       </table>
     </>
   );
 };
 
-export default DashBoard;
+export default Dashboard;

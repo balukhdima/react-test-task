@@ -13,7 +13,7 @@ export function Header() {
 
 export function Footer() {
   return (
-    <footer className="footer">
+    <footer>
       <div className="container p-3 mt-5 border-top d-flex justify-content-center">
         <a className="nav-link" href="https://github.com/balukhdima" target="_blank">
           GitHub Link

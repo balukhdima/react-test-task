@@ -1,43 +1,27 @@
-import React, {useState} from "react";
 import ReactDOM from "react-dom/client";
-import DashBoard from "./components/Dashboard";
-import { Header, Footer } from "./components/Layout";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import CreateEditBook from "./components/CreateEditBook";
+
+import {
+  Dashboard,
+  BookCreatePage,
+  BookEditPage,
+  Header,
+  Footer,
+} from "components";
+
+import "./index.css";
 
 function App() {
-  type Book = {
-    id: string;
-    title: string;
-    author: string;
-    category: string;
-    isbn: number;
-    createdAt: string;
-    editedAt: string;
-    status: string;
-  };
-
-  const [books, setBooks] = useState<Book[]>([]);
-  const [currentBook, setCurrentBook] = useState<Book>({
-    id: "",
-    title: "",
-    author: "",
-    category: "",
-    isbn: 0,
-    createdAt: "",
-    editedAt: "",
-    status: "",
-  });
-
   return (
     <>
       <BrowserRouter>
-          <Header />
-          <Routes>
-            <Route path="/" element={<DashBoard books = {books}  setBooks={setBooks} setCurrentBook={setCurrentBook} />} />
-            <Route path="/modify" element={<CreateEditBook  currentBook = {currentBook} />} />
-          </Routes>
-          <Footer />
+        <Header />
+        <Routes>
+          <Route path="/" element={<Dashboard />} />
+          <Route path="/books/edit" element={<BookEditPage />} />
+          <Route path="/books/create" element={<BookCreatePage />} />
+        </Routes>
+        <Footer />
       </BrowserRouter>
     </>
   );

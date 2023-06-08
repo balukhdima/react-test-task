@@ -1,26 +1,18 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import { BookStatus, type Book } from "types";
 import "../index.css";
 
-type Book = {
-  id: string;
-  title: string;
-  author: string;
-  category: string;
-  isbn: number;
-  createdAt: string;
-  editedAt: string;
-  status: string;
-};
+interface Props {
+  submitApiHandler: (data: Book) => Promise<Response>;
+}
 
-type Props = {
-  currentBook: Book;
-  // isEditing: number;
-};
-
-const CreateEditBook: React.FC<Props> = ({ currentBook }) => {
+const BookForm = ({ submitApiHandler }: Props) => {
   const navigate = useNavigate();
-  console.log(currentBook);
+  const location = useLocation();
+
+  const currentBook = (location.state || {}) as Book;
+
   const [selectedOption, setSelectedOption] = useState("");
 
   const handleChangeCategory = (
@@ -70,34 +62,26 @@ const CreateEditBook: React.FC<Props> = ({ currentBook }) => {
     event.preventDefault();
     const bookData = new FormData(event.currentTarget);
 
-    const book = Object.fromEntries(bookData.entries());
+    const book = Object.fromEntries(bookData.entries()) as any as Book;
 
-    if (checkRequiredInputs(event)) {
-      return;
-    }
+    if (checkRequiredInputs(event)) return;
 
-    book.status = "1";
-    book.createdAt = getDateTimeNow();
+    book.id = currentBook.id;
+    book.status ||= BookStatus.Active;
+    book.editedAt = currentBook.createdAt && getDateTimeNow();
+    book.createdAt ||= currentBook.createdAt || getDateTimeNow();
 
-    fetch("http://localhost:3004/books", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(book),
-    })
+    submitApiHandler(book)
       .then((response) => {
         if (!response.ok) {
           throw new Error("Wrong response from server");
         }
-        return response.json();
-      })
-      .then((data) => {
-        alert("New book created!");
+
         navigate(`/`);
       })
-      .catch((error) => console.log(error));
+      .catch((error) => console.error(error));
   }
+
   return (
     <>
       <div className="row">
@@ -122,7 +106,7 @@ const CreateEditBook: React.FC<Props> = ({ currentBook }) => {
                   required
                   name="author"
                   className="form-control"
-                  defaultValue=""
+                  defaultValue={currentBook.author}
                 />
               </div>
             </div>
@@ -153,7 +137,7 @@ const CreateEditBook: React.FC<Props> = ({ currentBook }) => {
                   min={0}
                   name="isbn"
                   className="form-control"
-                  defaultValue=""
+                  defaultValue={currentBook.isbn}
                 />
               </div>
             </div>
@@ -173,4 +157,4 @@ const CreateEditBook: React.FC<Props> = ({ currentBook }) => {
   );
 };
 
-export default CreateEditBook;
+export default BookForm;

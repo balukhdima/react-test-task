@@ -1,8 +1,4 @@
-.footer {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-}
+body { height: 100%; margin-bottom: 50px;}
 
 .border-red {
   border: 1px solid red;

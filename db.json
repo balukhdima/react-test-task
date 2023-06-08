@@ -1,42 +1,52 @@
 {
   "books": [
     {
-      "id": "2",
-      "title": "Book 2",
-      "author": "Author 2",
-      "category": "Category 2",
-      "isbn": 12345,
-      "createdAt": "",
-      "editedAt": "",
-      "status": "0"
+      "title": "Atlas: The Story of Pa Salt",
+      "author": "Lucinda Riley",
+      "category": "Fiction",
+      "isbn": "9781529043525",
+      "id": "-8wKmvk",
+      "status": "Active",
+      "editedAt": "June 8, 2023 at 11:06 AM",
+      "createdAt": "June 8, 2023 at 10:38 AM"
     },
     {
-      "id": "3",
-      "title": "Book 3",
-      "author": "Author 3",
-      "category": "Category 3",
-      "isbn": 12345,
-      "createdAt": "",
-      "editedAt": "",
-      "status": "1"
+      "title": "To Kill a Mockingbird",
+      "author": "Harper Lee",
+      "category": "Novel",
+      "isbn": "0446310786",
+      "status": "Deactivated",
+      "createdAt": "June 8, 2023 at 10:45 AM",
+      "id": "AyZpwXd"
     },
     {
-      "title": "1",
-      "author": "1",
-      "category": "1",
-      "isbn": 12345,
-      "createdAt": "June 7, 2023 at 7:10 PM",
-      "status": "0",
-      "id": "rFf5Ejp"
+      "title": "Don Quixote",
+      "author": "Miguel de Cervantes",
+      "category": "Fiction",
+      "isbn": "9781853260360",
+      "id": "o1U6y8z",
+      "status": "Active",
+      "editedAt": "June 8, 2023 at 10:47 AM",
+      "createdAt": "June 8, 2023 at 10:46 AM"
     },
     {
-      "title": "123",
-      "author": "123",
-      "category": "123",
-      "isbn": "1342",
-      "status": "1",
-      "createdAt": "June 7, 2023 at 8:05 PM",
-      "id": "syeKHYj"
+      "title": "Steve Jobs",
+      "author": "Walter Isaacson",
+      "category": "Biography",
+      "isbn": "1451648537",
+      "status": "Active",
+      "createdAt": "June 8, 2023 at 10:47 AM",
+      "id": "i58oEG3"
+    },
+    {
+      "title": "Pride and Prejudice",
+      "author": "Jane Austen",
+      "category": "Fiction",
+      "isbn": "0486284735",
+      "id": "GcEgrD4",
+      "status": "Deactivated",
+      "editedAt": "June 8, 2023 at 10:50 AM",
+      "createdAt": "June 8, 2023 at 10:50 AM"
     }
   ]
 }
