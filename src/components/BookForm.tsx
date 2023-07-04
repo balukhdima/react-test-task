@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { BookStatus, type Book } from "types";
-import "../index.css";
 
 interface Props {
   submitApiHandler: (data: Book) => Promise<Response>;

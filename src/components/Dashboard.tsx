@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { type Book, BookStatus } from "types";
+import { serialize } from "v8";
 
 const UndefinedStatus = "Undefined Status";
 
@@ -10,6 +11,24 @@ const Dashboard = () => {
     BookStatus | typeof UndefinedStatus
   >(BookStatus.Active);
   const [filteredCount, setFilteredCount] = useState<number>(0);
+
+  const [searchInput, setSearchinput] = useState("");
+  const [filteredBooks, setFilteredBooks] = useState<Book[]>([]);
+
+
+  function handlerSearchInput(e: React.ChangeEvent<HTMLInputElement>) {
+    setSearchinput(e.target.value);
+    searchBooks();
+  }
+
+  function searchBooks () {
+    if(searchInput.length > 0) {
+      setFilteredBooks(books.filter(book => book.title.toLowerCase().includes(searchInput.toLowerCase())));
+      return;
+    }
+    setFilteredBooks(books);
+  }
+
 
   const fetchBooks = useCallback(
     (status: BookStatus | typeof UndefinedStatus) => {
@@ -28,6 +47,7 @@ const Dashboard = () => {
           setFilteredCount(data.length);
 
           setBooks(data);
+          setFilteredBooks(data);
         })
         .catch((error) => console.error(error));
     },
@@ -84,6 +104,8 @@ const Dashboard = () => {
 
   useEffect(() => fetchBooks(selectedStatus), [fetchBooks, selectedStatus]);
 
+  useEffect(() => searchBooks(), [searchInput]);
+
   const navigate = useNavigate();
 
   return (
@@ -101,9 +123,12 @@ const Dashboard = () => {
           <option value={BookStatus.Deactivated}>Show Deactivated</option>
           <option value={UndefinedStatus}>Show All</option>
         </select>
-        <span className="px-3">
-        {filteredCount} rows
-        </span>
+        <span className="px-3">{filteredCount} rows</span>
+        <input
+        type="text"
+        onChange={handlerSearchInput}
+        value={searchInput}
+        />
       </div>
 
       <table className="table">
@@ -119,7 +144,7 @@ const Dashboard = () => {
           </tr>
         </thead>
         <tbody>
-          {books.map((book, index) => {
+          {filteredBooks.map((book, index) => {
             function navigateToEditPage() {
               navigate("/books/edit", { state: book });
             }
