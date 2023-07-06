@@ -86,8 +86,8 @@ const BookForm = ({ submitApiHandler }: Props) => {
       <div className="row">
         <div className="col-lg-6 mx-auto">
           <form onSubmit={(event) => handleSubmit(event)} noValidate>
-            <div className="row mb-3">
-              <label className="col-sm-4 col-form-label">Title</label>
+            <div className="book-form-section">
+              <label className="book-form-label">Title</label>
               <div className="col-sm-8">
                 <input
                   required
@@ -98,8 +98,8 @@ const BookForm = ({ submitApiHandler }: Props) => {
               </div>
             </div>
 
-            <div className="row mb-3">
-              <label className="col-sm-4 col-form-label">Author</label>
+            <div className="book-form-section">
+              <label className="book-form-label">Author</label>
               <div className="col-sm-8">
                 <input
                   required
@@ -110,8 +110,8 @@ const BookForm = ({ submitApiHandler }: Props) => {
               </div>
             </div>
 
-            <div className="row mb-3">
-              <label className="col-sm-4 col-form-label">Category</label>
+            <div className="book-form-section">
+              <label className="book-form-label">Category</label>
               <div className="col-sm-8">
                 <select
                   className="form-control"
@@ -127,8 +127,8 @@ const BookForm = ({ submitApiHandler }: Props) => {
               </div>
             </div>
 
-            <div className="row mb-3">
-              <label className="col-sm-4 col-form-label">ISBN</label>
+            <div className="book-form-section">
+              <label className="book-form-label">ISBN</label>
               <div className="col-sm-8">
                 <input
                   required
@@ -141,7 +141,7 @@ const BookForm = ({ submitApiHandler }: Props) => {
               </div>
             </div>
 
-            <div className="row mb-3">
+            <div className="book-form-section">
               <button type="submit" className="col-sm-2 btn btn-primary">
                 Save
               </button>

@@ -1,0 +1,59 @@
+@import "node_modules/bootstrap/scss/bootstrap";
+body {
+  height: 100%;
+  margin-bottom: 50px;
+}
+
+.header {
+  @extend .navbar;
+  @extend .navbar-expand-lg; 
+  @extend .bg-white;
+  @extend .border-bottom; 
+  @extend .box-shadow !optional;
+  @extend .py-2;
+  @extend .mb-2;
+}
+
+footer {
+  @extend .fixed-bottom;
+  height: 30px;
+}
+
+.border-red {
+    border: 1px solid red;
+  }
+
+.book-form-label {
+  @extend .col-sm-4;
+  @extend .col-form-label;
+}
+
+.book-form-section {
+    @extend .row;
+    @extend .mb-3;
+}
+
+.div-flex-center {
+  @extend .d-flex; 
+  @extend .justify-content-center;
+}
+
+.book-list {
+  @extend .table;  
+  @extend .table-bordered;
+  @extend .mt-2;
+  @extend .mb-2;
+  @extend .table-striped;
+  width: 98%;
+}
+
+.div-search {
+  @extend .d-flex;
+  @extend .justify-content-end;
+  @extend .pe-2;
+}
+
+.input-search {
+  border-width: thin;
+  @extend .rounded;
+}

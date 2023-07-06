@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { type Book, BookStatus } from "types";
-import { serialize } from "v8";
 
 const UndefinedStatus = "Undefined Status";
 
@@ -15,20 +14,22 @@ const Dashboard = () => {
   const [searchInput, setSearchinput] = useState("");
   const [filteredBooks, setFilteredBooks] = useState<Book[]>([]);
 
-
   function handlerSearchInput(e: React.ChangeEvent<HTMLInputElement>) {
     setSearchinput(e.target.value);
     searchBooks();
   }
 
-  function searchBooks () {
-    if(searchInput.length > 0) {
-      setFilteredBooks(books.filter(book => book.title.toLowerCase().includes(searchInput.toLowerCase())));
+  function searchBooks() {
+    if (searchInput.length > 0) {
+      setFilteredBooks(
+        books.filter((book) =>
+          book.title.toLowerCase().includes(searchInput.toLowerCase())
+        )
+      );
       return;
     }
     setFilteredBooks(books);
   }
-
 
   const fetchBooks = useCallback(
     (status: BookStatus | typeof UndefinedStatus) => {
@@ -108,86 +109,90 @@ const Dashboard = () => {
 
   const navigate = useNavigate();
 
+  const bookList = (book: Book, index: number) => {
+    function navigateToEditPage() {
+      navigate("/books/edit", { state: book });
+    }
+
+    return (
+      <tr key={index}>
+        <td>{book.title}</td>
+        <td>{book.author}</td>
+        <td>{book.category}</td>
+        <td>{book.isbn}</td>
+        <td>{book.createdAt}</td>
+        <td>{book.editedAt === "" ? "-" : book.editedAt}</td>
+        <td>
+          <button className="btn btn-primary m-2" onClick={navigateToEditPage}>
+            Edit
+          </button>
+          <button
+            className="btn btn-secondary m-2"
+            onClick={() => handleActivation(book)}
+          >
+            {book.status === BookStatus.Deactivated
+              ? "Re-activate"
+              : "Deactivate"}
+          </button>
+          {book.status === BookStatus.Deactivated ? (
+            <button
+              onClick={() => handleDelete(book.id)}
+              className="btn btn-danger m-2"
+            >
+              Delete
+            </button>
+          ) : (
+            ""
+          )}
+        </td>
+      </tr>
+    );
+  };
+
   return (
     <>
-      <h2 className="text-center mb-3">List of books</h2>
-      <div className="d-flex justify-content-center">
+    <div className="div-search">
+      <input
+        type="text"
+        className="input-search"
+        placeholder="Search"
+        onChange={handlerSearchInput}
+        value={searchInput}
+      />
+    </div>
+      <div className="div-flex-center">
         <Link className="btn btn-primary m-2" to="/books/create">
           Add Book
         </Link>
       </div>
 
-      <div className="d-flex justify-content-center">
+      <div className="div-flex-center">
         <select value={selectedStatus} onChange={filterBooks}>
           <option value={BookStatus.Active}>Show Active</option>
           <option value={BookStatus.Deactivated}>Show Deactivated</option>
           <option value={UndefinedStatus}>Show All</option>
         </select>
         <span className="px-3">{filteredCount} rows</span>
-        <input
-        type="text"
-        onChange={handlerSearchInput}
-        value={searchInput}
-        />
       </div>
 
-      <table className="table">
-        <thead>
-          <tr>
-            <th>Book title</th>
-            <th>Author name</th>
-            <th>Category</th>
-            <th>ISBN</th>
-            <th>Created At</th>
-            <th>Edited At</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {filteredBooks.map((book, index) => {
-            function navigateToEditPage() {
-              navigate("/books/edit", { state: book });
-            }
-
-            return (
-              <tr key={index}>
-                <td>{book.title}</td>
-                <td>{book.author}</td>
-                <td>{book.category}</td>
-                <td>{book.isbn}</td>
-                <td>{book.createdAt}</td>
-                <td>{book.editedAt === "" ? "-" : book.editedAt}</td>
-                <td>
-                  <button
-                    className="btn btn-primary m-2"
-                    onClick={navigateToEditPage}
-                  >
-                    Edit
-                  </button>
-                  <button
-                    className="btn btn-secondary m-2"
-                    onClick={() => handleActivation(book)}
-                  >
-                    {book.status === BookStatus.Deactivated
-                      ? "Re-activate"
-                      : "Deactivate"}
-                  </button>
-                  {book.status === BookStatus.Deactivated ? (
-                    <button
-                      onClick={() => handleDelete(book.id)}
-                      className="btn btn-danger m-2"
-                    >
-                      Delete
-                    </button>
-                  ) : (
-                    ""
-                  )}
-                </td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
+      <div className="div-flex-center">
+        <table className="book-list">
+          <thead>
+            <tr>
+              <th>Book title</th>
+              <th>Author name</th>
+              <th>Category</th>
+              <th>ISBN</th>
+              <th>Created At</th>
+              <th>Edited At</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {filteredBooks.map((book, index) => bookList(book, index))}
+          </tbody>
+        </table>
+      </div>
     </>
   );
 };
