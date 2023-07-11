@@ -153,7 +153,7 @@ const Dashboard = () => {
         <input
           type="text"
           className="input-search"
-          placeholder="Search"
+          placeholder="Search by title"
           onChange={handlerSearchInput}
           value={searchInput}
         />
