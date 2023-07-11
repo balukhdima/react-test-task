@@ -10,9 +10,9 @@ const Dashboard = () => {
     BookStatus | typeof UndefinedStatus
   >(BookStatus.Active);
   const [filteredCount, setFilteredCount] = useState<number>(0);
-
   const [searchInput, setSearchinput] = useState("");
   const [filteredBooks, setFilteredBooks] = useState<Book[]>([]);
+  const navigate = useNavigate();
 
   function handlerSearchInput(e: React.ChangeEvent<HTMLInputElement>) {
     setSearchinput(e.target.value);
@@ -107,8 +107,6 @@ const Dashboard = () => {
 
   useEffect(() => searchBooks(), [searchInput]);
 
-  const navigate = useNavigate();
-
   const bookList = (book: Book, index: number) => {
     function navigateToEditPage() {
       navigate("/books/edit", { state: book });
@@ -151,15 +149,15 @@ const Dashboard = () => {
 
   return (
     <>
-    <div className="div-search">
-      <input
-        type="text"
-        className="input-search"
-        placeholder="Search"
-        onChange={handlerSearchInput}
-        value={searchInput}
-      />
-    </div>
+      <div className="div-search">
+        <input
+          type="text"
+          className="input-search"
+          placeholder="Search"
+          onChange={handlerSearchInput}
+          value={searchInput}
+        />
+      </div>
       <div className="div-flex-center">
         <Link className="btn btn-primary m-2" to="/books/create">
           Add Book

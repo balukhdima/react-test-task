@@ -1,10 +1,16 @@
 import React, { useState } from "react";
+import { SubmitHandler, useForm } from "react-hook-form";
 import { useLocation, useNavigate } from "react-router-dom";
 import { BookStatus, type Book } from "types";
+import { getDateTimeNow } from "utils/dateUtils";
 
 interface Props {
   submitApiHandler: (data: Book) => Promise<Response>;
 }
+
+const formFieldsConfig = {
+  required: true,
+};
 
 const BookForm = ({ submitApiHandler }: Props) => {
   const navigate = useNavigate();
@@ -12,65 +18,13 @@ const BookForm = ({ submitApiHandler }: Props) => {
 
   const currentBook = (location.state || {}) as Book;
 
-  const [selectedOption, setSelectedOption] = useState("");
+  const onSubmit: SubmitHandler<Book> = (data) => {
+    data.id = currentBook.id;
+    data.status ||= BookStatus.Active;
+    data.editedAt = currentBook.createdAt && getDateTimeNow();
+    data.createdAt ||= currentBook.createdAt || getDateTimeNow();
 
-  const handleChangeCategory = (
-    event: React.ChangeEvent<HTMLSelectElement>
-  ) => {
-    const selectedValue = event.target.value;
-    setSelectedOption(selectedValue);
-  };
-
-  function checkRequiredInputs(event: React.FormEvent<HTMLFormElement>) {
-    const formElements = Array.from(
-      event.currentTarget.elements
-    ) as HTMLInputElement[];
-
-    const hasEmptyInputs = formElements.some(
-      (element) => element.required && element.value === ""
-    );
-
-    if (hasEmptyInputs) {
-      formElements.forEach((element) => {
-        if (element.required && element.value === "") {
-          element.classList.add("border-red");
-          element.placeholder = "can't be empty";
-        } else {
-          element.classList.remove("border-red");
-        }
-      });
-    }
-
-    return hasEmptyInputs;
-  }
-
-  function getDateTimeNow() {
-    const options: Intl.DateTimeFormatOptions = {
-      day: "numeric",
-      month: "long",
-      year: "numeric",
-      hour: "numeric",
-      minute: "numeric",
-      hour12: true,
-    };
-
-    return new Date().toLocaleString("en-US", options);
-  }
-
-  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    const bookData = new FormData(event.currentTarget);
-
-    const book = Object.fromEntries(bookData.entries()) as any as Book;
-
-    if (checkRequiredInputs(event)) return;
-
-    book.id = currentBook.id;
-    book.status ||= BookStatus.Active;
-    book.editedAt = currentBook.createdAt && getDateTimeNow();
-    book.createdAt ||= currentBook.createdAt || getDateTimeNow();
-
-    submitApiHandler(book)
+    submitApiHandler(data)
       .then((response) => {
         if (!response.ok) {
           throw new Error("Wrong response from server");
@@ -79,33 +33,48 @@ const BookForm = ({ submitApiHandler }: Props) => {
         navigate(`/`);
       })
       .catch((error) => console.error(error));
-  }
+  };
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<Book>({
+    values: { ...currentBook },
+  });
 
   return (
     <>
       <div className="row">
         <div className="col-lg-6 mx-auto">
-          <form onSubmit={(event) => handleSubmit(event)} noValidate>
+          <form onSubmit={handleSubmit(onSubmit)} noValidate autoComplete="off">
             <div className="book-form-section">
               <label className="book-form-label">Title</label>
               <div className="col-sm-8">
                 <input
-                  required
-                  name="title"
-                  className="form-control"
-                  defaultValue={currentBook.title}
+                  className={
+                    (errors.title ? " border-red " : "") + "form-control "
+                  }
+                  type="text"
+                  {...register("title", {
+                    ...formFieldsConfig,
+                    pattern: /^(?!\s*$).+/,
+                  })}
                 />
               </div>
             </div>
-
             <div className="book-form-section">
               <label className="book-form-label">Author</label>
               <div className="col-sm-8">
                 <input
-                  required
-                  name="author"
-                  className="form-control"
-                  defaultValue={currentBook.author}
+                  className={
+                    (errors.author ? " border-red " : "") + "form-control "
+                  }
+                  type="text"
+                  {...register("author", {
+                    ...formFieldsConfig,
+                    pattern: /^(?!\s*$).+/,
+                  })}
                 />
               </div>
             </div>
@@ -114,10 +83,10 @@ const BookForm = ({ submitApiHandler }: Props) => {
               <label className="book-form-label">Category</label>
               <div className="col-sm-8">
                 <select
-                  className="form-control"
-                  name="category"
-                  value={selectedOption}
-                  onChange={handleChangeCategory}
+                  className={
+                    (errors.category ? " border-red " : "") + "form-control "
+                  }
+                  {...register("category", { ...formFieldsConfig })}
                 >
                   <option value="Fiction">Fiction</option>
                   <option value="Novel">Novel</option>
@@ -131,16 +100,18 @@ const BookForm = ({ submitApiHandler }: Props) => {
               <label className="book-form-label">ISBN</label>
               <div className="col-sm-8">
                 <input
-                  required
                   type="number"
-                  min={0}
-                  name="isbn"
-                  className="form-control"
-                  defaultValue={currentBook.isbn}
+                  className={
+                    (errors.isbn ? " border-red " : "") + "form-control "
+                  }
+                  {...register("isbn", {
+                    ...formFieldsConfig,
+                    min: 0,
+                    pattern: /^(?!\s*$).+/,
+                  })}
                 />
               </div>
             </div>
-
             <div className="book-form-section">
               <button type="submit" className="col-sm-2 btn btn-primary">
                 Save
